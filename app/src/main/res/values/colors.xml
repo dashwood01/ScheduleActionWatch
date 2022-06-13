@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#FF005b4f</color>
+    <color name="colorPrimaryVariant">#FF005b4f</color>
+    <color name="colorOnPrimary">@color/white</color>
+    <color name="text_color_black_and_white">#000</color>
+    <color name="hint_color_text_input">#FF0069c0</color>
+    <color name="icon_profile_color">#FF005b4f</color>
+    <color name="transparent">#00000000</color>
+    <color name="color_green_button">#FF087f23</color>
+    <color name="color_highlight">#B6B6B6</color>
+    <color name="color_green_selected">#FF005b9f</color>
+    <color name="color_orange">#FFf57f17</color>
+    <color name="color_red">#FFa00037</color>
+    <color name="color_purple">#FF9c27b0</color>
+    <color name="color_pink">#FFba2d65</color>
+    <color name="color_blue">#FF006db3</color>
+    <color name="color_light_blue">#FF4dd0e1</color>
+    <color name="color_yellow">#FFfbc02d</color>
+    <color name="color_dark_purple">#FF4a148c</color>
+    <color name="black_with_alpha">#0C000000</color>
+    <color name="color_dark_green">#087f23</color>
+    <color name="color_light_green">#4caf50</color>
+</resources>
