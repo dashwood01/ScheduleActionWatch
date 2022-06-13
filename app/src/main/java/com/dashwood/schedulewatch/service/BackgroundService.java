@@ -94,6 +94,8 @@ public class BackgroundService extends Service implements SensorEventListener {
     private BroadcastReceiver batInfoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context ctxt, Intent intent) {
+            if (!isPlugged(ctxt))
+                return;
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
             T.log(level + "%");
         }
@@ -207,5 +209,11 @@ public class BackgroundService extends Service implements SensorEventListener {
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
         startForeground(2, notification);
+    }
+
+    public static boolean isPlugged(Context context) {
+        Intent intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        return plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB;
     }
 }
