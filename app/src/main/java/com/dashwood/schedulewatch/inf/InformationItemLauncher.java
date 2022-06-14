@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import java.util.Objects;
+
 public class InformationItemLauncher {
     private int id;
     private String name;
@@ -40,5 +42,18 @@ public class InformationItemLauncher {
 
     public void setAction(View.OnClickListener action) {
         this.action = action;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InformationItemLauncher that = (InformationItemLauncher) o;
+        return id == that.id && name.equals(that.name) && image.equals(that.image) && action.equals(that.action);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, image, action);
     }
 }

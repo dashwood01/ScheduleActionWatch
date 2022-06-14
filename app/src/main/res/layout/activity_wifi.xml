@@ -28,7 +28,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5sp"
-                    android:text="@string/txt_text_information_about_bluetooth_watch_off" />
+                    android:text="@string/txt_text_information_about_wifi_watch_off" />
 
                 <Switch
                     android:id="@+id/swUseIt"

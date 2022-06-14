@@ -4,9 +4,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dashwood.schedulewatch.databinding.RecItemLauncherBinding;
+import com.dashwood.schedulewatch.diff.DiffUtilLauncherCallback;
 import com.dashwood.schedulewatch.inf.InformationItemLauncher;
 
 import java.util.ArrayList;
@@ -27,8 +29,9 @@ public class AdapterRecItemLauncher extends RecyclerView.Adapter<AdapterRecItemL
     }
 
     public void setInformationItemLauncherList(List<InformationItemLauncher> informationItemLauncherList) {
+        final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtilLauncherCallback(informationItemLauncherList, this.informationItemLauncherList));
         this.informationItemLauncherList = informationItemLauncherList;
-        notifyDataSetChanged();
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @Override

@@ -12,7 +12,7 @@ import com.dashwood.schedulewatch.data.Data;
 import com.dashwood.schedulewatch.databinding.ActivityBlueToothBinding;
 import com.dashwood.schedulewatch.log.T;
 
-public class BlueToothActivity extends Activity {
+public class BluetoothActivity extends Activity {
 
     private ActivityBlueToothBinding binding;
 

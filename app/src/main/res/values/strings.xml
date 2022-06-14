@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">ScheduleWatch</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
     <string name="hello_world">Hello Square World!</string>
     <string name="sw_text_bluetooth">Schadule Bluetooth</string>
     <string name="item_text_bleutooth_schedule_when_watch_off">Bleutooth</string>
@@ -11,6 +7,7 @@
     <string name="item_text_schedule">Schedule</string>
     <string name="sw_text_off_or_on">Use it ?</string>
     <string name="txt_text_information_about_bluetooth_watch_off">When you turn on this feature bluetooth will turn off when watch off from your hand</string>
+    <string name="txt_text_information_about_wifi_watch_off">When you turn on this feature wifi will turn off when watch off from your hand</string>
     <string name="item_text_about">About</string>
     <string name="pref_home_bluetooth_from_take_off">prefHomeBluetoothtakeoff</string>
     <string name="pref_key_bluetooth_from_take_off">prefKeybluetoothfromtakeoff</string>
@@ -20,4 +17,8 @@
     <string name="txt_text_about_me">My name is Mohammad Nazem\nEmail : Mohammadnazem71@gmail.com</string>
     <string name="sw_text_for_off_and_on">For Off and On</string>
     <string name="sw_text_just_for_off">Just for Off</string>
+    <string name="pref_home_wifi_from_take_off_just_for_off">pref_homewififromtakeoff_justforoff</string>
+    <string name="pref_key_wifi_from_take_off_just_for_off">pref_keyjustforoff</string>
+    <string name="pref_home_wifi_from_take_off_for_off_and_on">prefhomeFromtakeoffForOffandOn</string>
+    <string name="pref_key_wifi_from_take_off_for_off_and_on">prefkeyForOffAndOn</string>
 </resources>

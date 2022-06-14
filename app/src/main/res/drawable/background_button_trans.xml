@@ -7,7 +7,7 @@
         android:drawable="@color/color_highlight" />
     <item android:state_pressed="true">
         <shape>
-            <corners android:radius="10sp"/>
+            <corners android:radius="10sp" />
             <solid android:color="@color/transparent" />
         </shape>
     </item>

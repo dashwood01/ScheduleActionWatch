@@ -41,16 +41,20 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.dashwood.schedulewatch.R;
 import com.dashwood.schedulewatch.data.Data;
 import com.dashwood.schedulewatch.log.T;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class BackgroundService extends Service implements SensorEventListener {
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private WifiManager wifiManager;
     private final MediaPlayer mediaPlayer = new MediaPlayer();
-    private boolean isCreated = false;
+    private Timer timer;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -64,12 +68,9 @@ public class BackgroundService extends Service implements SensorEventListener {
     }
 
     @Override
+
     public void onCreate() {
         super.onCreate();
-        T.log("Is : " + isCreated);
-        if (isCreated)
-            return;
-        isCreated = true;
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         mediaPlayer.setAudioAttributes(
                 new AudioAttributes.Builder()
@@ -80,8 +81,6 @@ public class BackgroundService extends Service implements SensorEventListener {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         registerReceiver(batInfoReceiver, intentFilter);
-      /*  Intent intent = new Intent(this, BackgroundService.class);
-        bindService(intent, m_serviceConnection, BIND_AUTO_CREATE);*/
         addNotification();
     }
 
@@ -91,13 +90,14 @@ public class BackgroundService extends Service implements SensorEventListener {
         mSensorManager.registerListener(this, detectLowLatency, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    private BroadcastReceiver batInfoReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver batInfoReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context ctxt, Intent intent) {
             if (!isPlugged(ctxt))
                 return;
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-            T.log(level + "%");
+            if (level > 95)
+                enableTimer();
         }
     };
 
@@ -121,7 +121,7 @@ public class BackgroundService extends Service implements SensorEventListener {
             enableBluetooth();
         if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off), false,
                 getString(R.string.pref_key_wifi_from_take_off)))
-            enableWifi();
+            checkWifiWhatToDo();
     }
 
     private void disableService() {
@@ -163,34 +163,39 @@ public class BackgroundService extends Service implements SensorEventListener {
         bluetoothAdapter.disable();
     }
 
+    private void checkWifiWhatToDo() {
+        if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off_just_for_off), false,
+                getString(R.string.pref_key_wifi_from_take_off_just_for_off)))
+            disableWifi();
+        else if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off_for_off_and_on), false,
+                getString(R.string.pref_key_wifi_from_take_off_for_off_and_on)))
+            if (wifiManager.isWifiEnabled())
+                disableWifi();
+            else
+                enableWifi();
+    }
+
     private void enableWifi() {
         if (wifiManager.isWifiEnabled())
             return;
-        //startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void disableWifi() {
-        if (wifiManager.isWifiEnabled()) {
-            try {
-                Uri pathUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.wifi_off);
-                mediaPlayer.reset();
-                mediaPlayer.setVolume(100f, 100f);
-                mediaPlayer.setDataSource(getApplicationContext(), pathUri);
-                mediaPlayer.prepare();
-                mediaPlayer.start();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        if (!wifiManager.isWifiEnabled())
+            return;
+        try {
+            Uri pathUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.wifi_off);
+            mediaPlayer.reset();
+            mediaPlayer.setVolume(100f, 100f);
+            mediaPlayer.setDataSource(getApplicationContext(), pathUri);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
-
-    @Override
-    public void onDestroy() {
-        T.log("Ondestory");
-        super.onDestroy();
-    }
-
 
     private void addNotification() {
         String NOTIFICATION_CHANNEL_ID = "com.dashwood.schedulewatch";
@@ -211,9 +216,40 @@ public class BackgroundService extends Service implements SensorEventListener {
         startForeground(2, notification);
     }
 
-    public static boolean isPlugged(Context context) {
+    private boolean isPlugged(Context context) {
         Intent intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
         return plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB;
+    }
+
+    private void enableTimer() {
+        if (timer != null)
+            return;
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (isPlugged(getApplicationContext()))
+                    soundNotify();
+                else {
+                    timer.purge();
+                    timer.cancel();
+                    timer = null;
+                }
+            }
+        }, 1000, 60000);
+    }
+
+    private void soundNotify() {
+        try {
+            Uri pathUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.blue_on);
+            mediaPlayer.reset();
+            mediaPlayer.setVolume(100f, 100f);
+            mediaPlayer.setDataSource(getApplicationContext(), pathUri);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
