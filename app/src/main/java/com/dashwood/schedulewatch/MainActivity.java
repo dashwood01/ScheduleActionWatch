@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.wear.widget.WearableLinearLayoutManager;
 
@@ -48,7 +49,7 @@ public class MainActivity extends Activity {
                 new CustomScrollingLayoutCallback();
         binding.recLauncherView.setLayoutManager(
                 new WearableLinearLayoutManager(this, customScrollingLayoutCallback));
-        binding.recLauncherView.setLayoutManager(new GridLayoutManager(this, 2));
+        binding.recLauncherView.setLayoutManager(new LinearLayoutManager(this));
         binding.recLauncherView.setAdapter(adapterRecItemLauncher);
 
     }

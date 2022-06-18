@@ -8,7 +8,7 @@
     <item android:state_pressed="true">
         <shape>
             <corners android:radius="10sp" />
-            <solid android:color="@color/transparent" />
+            <solid android:color="@color/color_green_selected" />
         </shape>
     </item>
 </ripple>

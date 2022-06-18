@@ -6,8 +6,8 @@
     <string name="item_text_wifi_schedule_when_watch_off">WIFI</string>
     <string name="item_text_schedule">Schedule</string>
     <string name="sw_text_off_or_on">Use it ?</string>
-    <string name="txt_text_information_about_bluetooth_watch_off">When you turn on this feature bluetooth will turn off when watch off from your hand</string>
-    <string name="txt_text_information_about_wifi_watch_off">When you turn on this feature wifi will turn off when watch off from your hand</string>
+    <string name="txt_text_information_about_bluetooth_watch_off">When you Enable this feature, Bluetooth will turn off when remove watch from your hand</string>
+    <string name="txt_text_information_about_wifi_watch_off">When you Enable this feature, wifi will turn off when remove watch from your hand</string>
     <string name="item_text_about">About</string>
     <string name="pref_home_bluetooth_from_take_off">prefHomeBluetoothtakeoff</string>
     <string name="pref_key_bluetooth_from_take_off">prefKeybluetoothfromtakeoff</string>
