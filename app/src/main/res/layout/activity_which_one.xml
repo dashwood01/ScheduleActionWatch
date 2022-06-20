@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WhichOneActivity">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_boxedEdges="all">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:layout_margin="5sp"
+            app:cardBackgroundColor="@color/color_back_wifi"
+            app:cardCornerRadius="30sp">
+
+            <androidx.constraintlayout.utils.widget.ImageFilterButton
+                android:id="@+id/btnWifi"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_wifi"
+                android:tint="@color/white" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            app:cardBackgroundColor="@color/color_back_location"
+            app:cardCornerRadius="30sp">
+
+            <androidx.constraintlayout.utils.widget.ImageFilterButton
+                android:id="@+id/btnLocation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_location"
+                android:tint="@color/white" />
+        </androidx.cardview.widget.CardView>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.wear.widget.BoxInsetLayout>

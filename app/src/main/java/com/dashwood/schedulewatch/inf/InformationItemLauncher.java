@@ -1,6 +1,7 @@
 package com.dashwood.schedulewatch.inf;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
@@ -11,6 +12,7 @@ public class InformationItemLauncher {
     private String name;
     private Drawable image;
     private View.OnClickListener action;
+    private int color;
 
     public int getId() {
         return id;
@@ -55,5 +57,13 @@ public class InformationItemLauncher {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, image, action);
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 }

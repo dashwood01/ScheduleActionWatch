@@ -4,34 +4,33 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.dashwood.schedulewatch.data.Data;
-import com.dashwood.schedulewatch.databinding.ActivityWifiBinding;
+import com.dashwood.schedulewatch.databinding.ActivityLocationBinding;
 
-public class WifiActivity extends Activity {
-
-    private ActivityWifiBinding binding;
+public class LocationActivity extends Activity {
+    private ActivityLocationBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityWifiBinding.inflate(getLayoutInflater());
+        binding = ActivityLocationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setAction();
         setView();
     }
 
     private void setView() {
-        binding.swUseIt.setChecked(Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off),
-                false, getString(R.string.pref_key_wifi_from_take_off)));
-        binding.swJustForOff.setChecked(Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off_just_for_off),
-                false, getString(R.string.pref_key_wifi_from_take_off_just_for_off)));
-        binding.swForOffAndOn.setChecked(Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off_for_off_and_on),
-                false, getString(R.string.pref_key_wifi_from_take_off_for_off_and_on)));
+        binding.swUseIt.setChecked(Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off),
+                false, getString(R.string.pref_key_location_from_take_off)));
+        binding.swJustForOff.setChecked(Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off_just_for_off),
+                false, getString(R.string.pref_key_location_from_take_off_just_for_off)));
+        binding.swForOffAndOn.setChecked(Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off_for_off_and_on),
+                false, getString(R.string.pref_key_location_from_take_off_for_off_and_on)));
     }
 
     private void setAction() {
         binding.swUseIt.setOnCheckedChangeListener((compoundButton, b) -> {
-            Data.saveBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off),
-                    b, getString(R.string.pref_key_wifi_from_take_off));
+            Data.saveBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off),
+                    b, getString(R.string.pref_key_location_from_take_off));
             if (b) {
                 setEnableOfFeature();
                 return;
@@ -41,17 +40,15 @@ public class WifiActivity extends Activity {
         binding.swJustForOff.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b)
                 setEnableJustForWifi();
-            Data.saveBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off_just_for_off),
-                    b, getString(R.string.pref_key_wifi_from_take_off_just_for_off));
+            Data.saveBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off_just_for_off),
+                    b, getString(R.string.pref_key_location_from_take_off_just_for_off));
         });
-
         binding.swForOffAndOn.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b)
                 setEnableForWifi();
-            Data.saveBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off_for_off_and_on),
-                    b, getString(R.string.pref_key_wifi_from_take_off_for_off_and_on));
+            Data.saveBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off_for_off_and_on),
+                    b, getString(R.string.pref_key_location_from_take_off_for_off_and_on));
         });
-
     }
 
     private void setEnableOfFeature() {
@@ -76,8 +73,8 @@ public class WifiActivity extends Activity {
 
     private void setOffStoredIfNoneSwitchChecked() {
         if (!binding.swForOffAndOn.isChecked() && !binding.swJustForOff.isChecked())
-            Data.saveBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off),
-                    false, getString(R.string.pref_key_wifi_from_take_off));
+            Data.saveBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off),
+                    false, getString(R.string.pref_key_location_from_take_off));
     }
 
     @Override

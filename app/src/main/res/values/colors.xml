@@ -28,4 +28,10 @@
     <color name="black_with_alpha">#0C000000</color>
     <color name="color_dark_green">#087f23</color>
     <color name="color_light_green">#4caf50</color>
+
+    <color name="color_back_bluetooth">#007ac1</color>
+    <color name="color_back_wifi">#005b4f</color>
+    <color name="color_back_about">#00600f</color>
+    <color name="color_back_schedule">#8c0032</color>
+    <color name="color_back_location">#b91400</color>
 </resources>

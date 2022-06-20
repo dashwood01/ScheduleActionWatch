@@ -1,6 +1,5 @@
 package com.dashwood.schedulewatch.service;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -9,50 +8,38 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
-import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.dashwood.schedulewatch.R;
+import com.dashwood.schedulewatch.WhichOneActivity;
 import com.dashwood.schedulewatch.data.Data;
-import com.dashwood.schedulewatch.log.T;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class BackgroundService extends Service implements SensorEventListener {
-    private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private WifiManager wifiManager;
+    private LocationManager locationManager;
     private final MediaPlayer mediaPlayer = new MediaPlayer();
     private Timer timer;
 
@@ -72,6 +59,7 @@ public class BackgroundService extends Service implements SensorEventListener {
     public void onCreate() {
         super.onCreate();
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mediaPlayer.setAudioAttributes(
                 new AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
@@ -119,6 +107,16 @@ public class BackgroundService extends Service implements SensorEventListener {
         if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_bluetooth_from_take_off),
                 false, getString(R.string.pref_key_bluetooth_from_take_off)))
             enableBluetooth();
+        if (checkTwoSettings()) {
+            if (!wifiManager.isWifiEnabled() && !locationManager.isLocationEnabled()) {
+                soundNotifyLocation();
+                addNotificationForEnable();
+            } else if (!wifiManager.isWifiEnabled())
+                checkWifiWhatToDo();
+            else if (!locationManager.isLocationEnabled())
+                checkLocationWhatToDo();
+            return;
+        }
         if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off), false,
                 getString(R.string.pref_key_wifi_from_take_off)))
             checkWifiWhatToDo();
@@ -128,23 +126,25 @@ public class BackgroundService extends Service implements SensorEventListener {
         if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_bluetooth_from_take_off),
                 false, getString(R.string.pref_key_bluetooth_from_take_off)))
             disableBluetooth();
+        if (checkTwoSettings()) {
+            soundNotifyLocation();
+            addNotificationForDisable();
+            return;
+        }
         if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off), false,
                 getString(R.string.pref_key_wifi_from_take_off)))
             disableWifi();
     }
 
+    private boolean checkTwoSettings() {
+        return (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off), false,
+                getString(R.string.pref_key_wifi_from_take_off)) && Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off), false,
+                getString(R.string.pref_key_location_from_take_off)));
+    }
+
     @SuppressLint("MissingPermission")
     private void enableBluetooth() {
-        try {
-            Uri pathUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.blue_on);
-            mediaPlayer.reset();
-            mediaPlayer.setVolume(100f, 100f);
-            mediaPlayer.setDataSource(getApplicationContext(), pathUri);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        soundNotifyBluetoothEnable();
         bluetoothAdapter.enable();
     }
 
@@ -163,6 +163,18 @@ public class BackgroundService extends Service implements SensorEventListener {
         bluetoothAdapter.disable();
     }
 
+    private void checkLocationWhatToDo() {
+        if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off_just_for_off), false,
+                getString(R.string.pref_key_location_from_take_off_just_for_off)))
+            disableLocation();
+        else if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off_for_off_and_on), false,
+                getString(R.string.pref_key_location_from_take_off_for_off_and_on)))
+            if (locationManager.isLocationEnabled())
+                disableLocation();
+            else
+                enableLocation();
+    }
+
     private void checkWifiWhatToDo() {
         if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off_just_for_off), false,
                 getString(R.string.pref_key_wifi_from_take_off_just_for_off)))
@@ -178,23 +190,29 @@ public class BackgroundService extends Service implements SensorEventListener {
     private void enableWifi() {
         if (wifiManager.isWifiEnabled())
             return;
+        soundNotifyWifi();
         startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void disableWifi() {
         if (!wifiManager.isWifiEnabled())
             return;
-        try {
-            Uri pathUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.wifi_off);
-            mediaPlayer.reset();
-            mediaPlayer.setVolume(100f, 100f);
-            mediaPlayer.setDataSource(getApplicationContext(), pathUri);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        soundNotifyWifi();
         startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
+
+    private void enableLocation() {
+        if (locationManager.isLocationEnabled())
+            return;
+        soundNotifyLocation();
+        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
+
+    private void disableLocation() {
+        if (!locationManager.isLocationEnabled())
+            return;
+        soundNotifyLocation();
+        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void addNotification() {
@@ -216,6 +234,45 @@ public class BackgroundService extends Service implements SensorEventListener {
         startForeground(2, notification);
     }
 
+    private void addNotificationForDisable() {
+        Intent intent = new Intent(getApplicationContext(), WhichOneActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+        String NOTIFICATION_CHANNEL_ID = "com.dashwood.schedulewatch";
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID);
+        Notification notification = notificationBuilder.setOngoing(false)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Turn off WIFI and GPS")
+                .setPriority(NotificationManager.IMPORTANCE_HIGH)
+                .setCategory(Notification.CATEGORY_STATUS)
+                .setContentIntent(notifyPendingIntent)
+                .build();
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        notificationManager.notify(33658, notification);
+    }
+
+    private void addNotificationForEnable() {
+        Intent intent = new Intent(getApplicationContext(), WhichOneActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                this, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        String NOTIFICATION_CHANNEL_ID = "com.dashwood.schedulewatch";
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID);
+        Notification notification = notificationBuilder.setOngoing(false)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Turn on WIFI and GPS")
+                .setPriority(NotificationManager.IMPORTANCE_HIGH)
+                .setCategory(Notification.CATEGORY_STATUS)
+                .setContentIntent(notifyPendingIntent)
+                .build();
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        notificationManager.notify(3365, notification);
+    }
+
     private boolean isPlugged(Context context) {
         Intent intent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
@@ -230,7 +287,7 @@ public class BackgroundService extends Service implements SensorEventListener {
             @Override
             public void run() {
                 if (isPlugged(getApplicationContext()))
-                    soundNotify();
+                    soundNotifyCharge();
                 else {
                     timer.purge();
                     timer.cancel();
@@ -240,9 +297,48 @@ public class BackgroundService extends Service implements SensorEventListener {
         }, 1000, 60000);
     }
 
-    private void soundNotify() {
+    private void soundNotifyBluetoothEnable() {
         try {
             Uri pathUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.blue_on);
+            mediaPlayer.reset();
+            mediaPlayer.setVolume(100f, 100f);
+            mediaPlayer.setDataSource(getApplicationContext(), pathUri);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void soundNotifyWifi() {
+        try {
+            Uri pathUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.wifi_action);
+            mediaPlayer.reset();
+            mediaPlayer.setVolume(100f, 100f);
+            mediaPlayer.setDataSource(getApplicationContext(), pathUri);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void soundNotifyLocation() {
+        try {
+            Uri pathUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.location_action);
+            mediaPlayer.reset();
+            mediaPlayer.setVolume(100f, 100f);
+            mediaPlayer.setDataSource(getApplicationContext(), pathUri);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void soundNotifyCharge() {
+        try {
+            Uri pathUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.charge_full);
             mediaPlayer.reset();
             mediaPlayer.setVolume(100f, 100f);
             mediaPlayer.setDataSource(getApplicationContext(), pathUri);

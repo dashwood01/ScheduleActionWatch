@@ -4,11 +4,15 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/drawable/background_button_trans.xml" value="0.1425" />
+        <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/drawable/ic_location.xml" value="0.1075" />
         <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/drawable/ic_wifi.xml" value="0.1425" />
         <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/layout/activity_about.xml" value="0.47704590818363274" />
-        <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/layout/activity_main.xml" value="1.10352422907489" />
+        <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/layout/activity_location.xml" value="0.75" />
+        <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/layout/activity_main.xml" value="0.33532934131736525" />
         <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/layout/activity_splash_screen.xml" value="0.5042194092827004" />
+        <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/layout/activity_which_one.xml" value="0.9494047619047619" />
         <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/layout/activity_wifi.xml" value="0.6732394366197183" />
+        <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/layout/fragment_home.xml" value="0.6367265469061876" />
         <entry key="..\:/DashWood/Workspace/ScheduleActionWatch/app/src/main/res/layout/rec_item_launcher.xml" value="0.5807560137457045" />
         <entry key="..\:/DashWood/Workspace/ScheduleWatch/app/src/main/res/drawable/background_button_blue.xml" value="0.1185" />
         <entry key="..\:/DashWood/Workspace/ScheduleWatch/app/src/main/res/drawable/ic_about.xml" value="0.1185" />

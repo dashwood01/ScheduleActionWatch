@@ -7,8 +7,8 @@
         android:drawable="@color/color_highlight" />
     <item android:state_pressed="true">
         <shape>
-            <corners android:radius="10sp" />
-            <solid android:color="@color/color_green_selected" />
+            <corners android:radius="30sp" />
+            <solid android:color="#34515e" />
         </shape>
     </item>
 </ripple>
