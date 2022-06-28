@@ -120,6 +120,9 @@ public class BackgroundService extends Service implements SensorEventListener {
         if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off), false,
                 getString(R.string.pref_key_wifi_from_take_off)))
             checkWifiWhatToDo();
+        if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off),
+                false, getString(R.string.pref_key_location_from_take_off)))
+            checkLocationWhatToDo();
     }
 
     private void disableService() {
@@ -134,6 +137,10 @@ public class BackgroundService extends Service implements SensorEventListener {
         if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_wifi_from_take_off), false,
                 getString(R.string.pref_key_wifi_from_take_off)))
             disableWifi();
+        if (Data.readBoolPreference(getApplicationContext(), getString(R.string.pref_home_location_from_take_off),
+                false, getString(R.string.pref_key_location_from_take_off)))
+            checkLocationWhatToDo();
+
     }
 
     private boolean checkTwoSettings() {
@@ -205,14 +212,16 @@ public class BackgroundService extends Service implements SensorEventListener {
         if (locationManager.isLocationEnabled())
             return;
         soundNotifyLocation();
-        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        addNotificationForEnable();
+        //startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void disableLocation() {
         if (!locationManager.isLocationEnabled())
             return;
         soundNotifyLocation();
-        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        addNotificationForDisable();
+        //startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     private void addNotification() {
