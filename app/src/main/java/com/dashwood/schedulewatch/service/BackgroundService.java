@@ -249,9 +249,15 @@ public class BackgroundService extends Service implements SensorEventListener {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(
                 this, 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-        String NOTIFICATION_CHANNEL_ID = "1002";
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        String NOTIFICATION_CHANNEL_ID = "Notification For Action";
+        String channelName = "Background Service";
+        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert manager != null;
+        manager.createNotificationChannel(chan);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(false)
                 .setSmallIcon(R.mipmap.ic_launcher)
