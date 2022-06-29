@@ -250,14 +250,7 @@ public class BackgroundService extends Service implements SensorEventListener {
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(
                 this, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        String NOTIFICATION_CHANNEL_ID = "Notification For Action";
-        String channelName = "Background Service";
-        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
-        chan.setLightColor(Color.BLUE);
-        chan.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        assert manager != null;
-        manager.createNotificationChannel(chan);
+        String NOTIFICATION_CHANNEL_ID = "com.dashwood.schedulewatch";
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(false)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -280,7 +273,7 @@ public class BackgroundService extends Service implements SensorEventListener {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(false)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Turn on WIFI and GPS")
+                .setContentTitle("Turn off WIFI and GPS")
                 .setPriority(NotificationManager.IMPORTANCE_HIGH)
                 .setCategory(Notification.CATEGORY_STATUS)
                 .setContentIntent(notifyPendingIntent)
