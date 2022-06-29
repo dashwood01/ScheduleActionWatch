@@ -1,8 +1,11 @@
 package com.dashwood.schedulewatch;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -19,6 +22,7 @@ public class WhichOneActivity extends Activity {
         super.onCreate(savedInstanceState);
         binding = ActivityWhichOneBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        NotificationManagerCompat.from(this).cancelAll();
         setAction();
     }
 

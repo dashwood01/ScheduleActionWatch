@@ -32,6 +32,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.dashwood.schedulewatch.R;
 import com.dashwood.schedulewatch.WhichOneActivity;
 import com.dashwood.schedulewatch.data.Data;
+import com.dashwood.schedulewatch.log.T;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -250,7 +251,7 @@ public class BackgroundService extends Service implements SensorEventListener {
                 this, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
-        String NOTIFICATION_CHANNEL_ID = "com.dashwood.schedulewatch";
+        String NOTIFICATION_CHANNEL_ID = "1002";
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID);
         Notification notification = notificationBuilder.setOngoing(false)
                 .setSmallIcon(R.mipmap.ic_launcher)
